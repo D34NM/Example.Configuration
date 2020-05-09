@@ -114,7 +114,8 @@ public MyConstructor(IConfiguration configuration)
 var options = new ExampleOptions();
 configuration.Bind("Example", options);
 
-if (options.Configuration3) {
+if (options.Configuration3) 
+{
     // some code goes here
 }
 ```
@@ -151,7 +152,8 @@ public MyConstructor(IOptions<ExampleOptions> options)
 }
 
 // Somewhere in the code :)
-if (configuration.Configuration3) {
+if (configuration.Configuration3)
+{
     // some code goes here
 }
 ```
@@ -204,7 +206,8 @@ public MyConstructor(IOptionsMonitor<ExampleOptions> options)
 }
 
 // Somewhere in the code :)
-if (configuration.CurrentValue.Configuration3) {
+if (configuration.CurrentValue.Configuration3)
+{
     // some code goes here
 }
 ```
