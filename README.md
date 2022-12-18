@@ -270,6 +270,40 @@ services.AddOptions<ExampleOptions>(
 
 There is an overload of the `Validate` method that also allows you to specify the error message, in case that validation fails. Chaining of the `Validate` is also possible and you can split the validation (together maybe with proper error messages) in more granular and specific functions. In case of the validation errors, application won't even start. So this could be one of the ways to go around of the issue when using the annotations.
 
+### IConfigureOptions<T>
+
+If there is a need to construct configuration based, for example, on some third party requests (or some more complex computation), you can reach out for `IConfigureOptions<T>` interface. It allows you to, like regular service, use DI to inject dependencies and other fun stuff,
+
+```csharp
+public class ConfigureExampleOptionsOptions : IConfigureOptions<ExampleOptions>
+{
+    private readonly IExternalServiceClient _client;
+
+    public ConfigureMySettingsOptions(IExternalServiceClient client)
+    {
+        _client = client;
+    }
+
+    public void Configure(ExampleOptions options)
+    {
+        options.Configuration1 = _client.DoSomeWork();
+    }
+}
+```
+
+Trying to achieve similar thing using the `Configure()` method leads to some "funny" looking code. This is a nice way to indicate there is some "complexity" about this particular configuration. And encapsulate it within single place. One nice thing, it "stacks" with standard `Configure()`. So you can load some values from `appsettings.json` and then do some complex calculations for others:
+
+```csharp
+var builder = WebApplication.CreateBuilder(args);
+var configuration = builder.Configuration;
+
+builder.Services.Configure<ExampleOptions>(configuration.GetSection("ExampleOptions")); 
+
+builder.Services.AddSingleton<IConfigureOptions<ExampleOptions>, ConfigureExampleOptionsOptions>();
+
+builderServices.AddSingleton<IExternalServiceClient>();
+```
+
 ### IValidateOptions
 
 It is also possible to move the validation code into its own place, to make the code cleaner and more maintainable. This is where the `IValidateOptions<T>` is good for.
