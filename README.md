@@ -359,3 +359,24 @@ public void Test01()
 ```
 
 The second option here is to use mocking. This depends on your framework of choice to define the mocks, so example can defer so will be omitted in this case.
+
+And another option is to use `WebApplicationFactory<T>` to configure the test configurations:
+
+```csharp
+public class MyWebAppFactory : WebApplicationFactory<Program>
+{
+    // rest of code
+    // ../
+
+    protected override void ConfigureWebHost(IWebHostBuilder builder)
+    {
+        builder.ConfigureAppConfiguration((context, configurationBuilder) => 
+        {
+            configurationBuilder.AddInMemoryCollection(new Dictionary<string, string>
+            {
+                "Configuration1": "SomeValue"
+            });
+        });
+    }
+}
+```
